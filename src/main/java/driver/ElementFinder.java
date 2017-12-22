@@ -23,6 +23,7 @@ import com.google.common.base.Function;
 public class ElementFinder {
 	
 	private static final Long TIMEOUT = 30L;
+	private static final int NUMBER_OF_RETRIES = 25;
 	private TestAutomationProperties properties;
 	private WebDriver webDriver;
 	
@@ -77,7 +78,7 @@ public class ElementFinder {
 	
 	public void waitForElementWithClassName(WebElement element, String className){
 		int attempts = 0;
-		while (attempts < 15) {
+		while (attempts < NUMBER_OF_RETRIES) {
 			try {
 				attempts++;
 				waitForElementToBeClickable(element.findElements(By.className(className)).iterator().next());
@@ -91,7 +92,7 @@ public class ElementFinder {
 	
 	public void waitForTextNotVisibleWithClassName(WebElement element, String className, String text){
 		int attempts = 0;
-		while (attempts < 15) {
+		while (attempts < NUMBER_OF_RETRIES) {
 			try {
 				attempts++;
 				if(!element.findElements(By.className(className)).iterator().next().getText().contains(text)){
