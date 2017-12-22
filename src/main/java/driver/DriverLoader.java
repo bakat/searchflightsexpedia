@@ -19,6 +19,11 @@ public class DriverLoader {
 		properties = new TestAutomationProperties();
 		properties.loadProperties();
 	}
+	
+	public WebDriver getWebDriver(){
+		return webDriver;
+	}
+	
 	public void getDriver(EnumBrowser browser, DesiredCapabilities capabilities){
 		
 		File file;

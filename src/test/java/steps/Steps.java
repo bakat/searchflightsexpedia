@@ -10,6 +10,7 @@ import pageObjects.resultsPage.ResultsPage;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import driver.ElementFinder;
 import driver.TestEnvironment;
 
 public class Steps {
@@ -26,7 +27,8 @@ public class Steps {
 	
 	@Given("^I want to fly from \"([^\"]*)\" airport in \"([^\"]*)\" to \"([^\"]*)\" airport in \"([^\"]*)\"$")
 	public void i_want_to_fly_from_airport_in_to_airport_in(String airPortFrom, String cityFrom, String airPortTo, String cityTo) throws Throwable {
-		testEnvironment.getFinder().LoadPage(testEnvironment.getUrl());
+		ElementFinder finder = new ElementFinder(testEnvironment.getDriver());
+		finder.LoadPage(testEnvironment.getDriver(), testEnvironment.getUrl());
 
 		mainPage = PageFactory.initElements(testEnvironment.getDriver(), MainPage.class);
 		mainPage.verifyElementsPresent();

@@ -1,6 +1,5 @@
 package driver;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -10,11 +9,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
@@ -45,98 +40,14 @@ public class ElementFinder {
 	public WebDriver getWebDriver(){
 		return webDriver;
 	}
-	
 
 	public void navigateToUrl(String url){
 		webDriver.navigate().to(url);
 	}
 	
-	public void LoadPage(String url){
+	public void LoadPage(WebDriver webDriver, String url){
 		webDriver.get(url);
 		webDriver.manage().window().maximize();
-	}
-	
-	public void getDriver(EnumBrowser browser, DesiredCapabilities capabilities){
-		
-		File file;
-		
-		if(browser != null){
-			switch (browser) {
-				case FIREFOX:
-					try {
-						webDriver = new FirefoxDriver();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					break;
-				
-				case CHROME:
-					file = new File(properties.getBrowserChrome());
-					System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
-
-					try {
-						webDriver = new ChromeDriver();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					break;
-					
-				case IE:
-					file = new File(properties.getBrowserIE());
-					System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
-					
-					try {
-						webDriver = new InternetExplorerDriver();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					
-					break;
-					
-				default:
-					System.out.println("Not a valid browser.");
-					break;
-			}
-		} else if(browser == null){
-			try {
-				file = new File(properties.getBrowserFireFox());
-				System.setProperty("webdriver.gecko.driver", file.getAbsolutePath());
-				webDriver = new FirefoxDriver();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public String getEnvironment(EnumEnvironment environment){
-		
-		String webEnvironment = "";
-		
-		if(environment != null){
-			switch (environment) {
-				case PRODUCTION:
-					webEnvironment = properties.getEnvironmentProduction();
-					break;
-				
-				case QA:
-					webEnvironment = properties.getEnvironmentQA();	
-					break;
-					
-				default:
-					System.out.println("Not a valid environment");
-					break;
-			}
-		} else {
-			if(properties.getDefaultEnvironment().equals("QA")){
-				webEnvironment = properties.getEnvironmentQA();
-			}else if(properties.getDefaultEnvironment().equals("PRODUCTION")){
-				webEnvironment = properties.getEnvironmentProduction();
-			} else{
-				webEnvironment = properties.getEnvironmentQA();
-			}
-		}
-		
-		return webEnvironment;
 	}
 	
 	public void closeBrowser(){
@@ -171,6 +82,19 @@ public class ElementFinder {
 				attempts++;
 				waitForElementToBeClickable(element.findElements(By.className(className)).iterator().next());
 				if(element.findElements(By.className(className)).iterator().next().isDisplayed()){
+					break;
+				}
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public void waitForTextNotVisibleWithClassName(WebElement element, String className, String text){
+		int attempts = 0;
+		while (attempts < 15) {
+			try {
+				attempts++;
+				if(!element.findElements(By.className(className)).iterator().next().getText().contains(text)){
 					break;
 				}
 			} catch (Exception e) {

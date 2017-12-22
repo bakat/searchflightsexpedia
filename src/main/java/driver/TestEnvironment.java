@@ -3,16 +3,36 @@ package driver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import util.TestAutomationProperties;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 
 public class TestEnvironment {
 	private static EnumBrowser browser;
 	private static EnumEnvironment environment;
-	private WebDriver driver;
-	private ElementFinder finder;
+	private WebDriver webDriver;
 	private String url;
 	private static DesiredCapabilities capabilities;
+	private DriverLoader driverLoader;
+	TestAutomationProperties properties;
+	
+	public TestEnvironment(DriverLoader driverLoader) {
+		this.driverLoader = driverLoader;
+		properties = new TestAutomationProperties();
+		properties.loadProperties();
+	}
+	
+	@Before
+	public void setUp() throws Exception {
+		driverLoader.getDriver(getBrowser(), getCapabilities());
+		setDriver(driverLoader.getWebDriver());
+		setUrl(getTestEnvironment(getEnvironment()));
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		driverLoader.getWebDriver().quit();
+	}
 	
 	public DesiredCapabilities getCapabilities() {
 		return capabilities;
@@ -39,19 +59,42 @@ public class TestEnvironment {
 	}
 
 	public WebDriver getDriver(){
-		return driver;
+		return webDriver;
 	}
 	
 	public void setDriver(WebDriver webDriver){
-		driver = webDriver;
+		this.webDriver = webDriver;
 	}
 	
-	public ElementFinder getFinder(){
-		if(finder == null){
-			finder = new ElementFinder();
-			return finder;
+	public String getTestEnvironment(EnumEnvironment environment){
+		
+		String webEnvironment = "";
+		
+		if(environment != null){
+			switch (environment) {
+				case PRODUCTION:
+					webEnvironment = properties.getEnvironmentProduction();
+					break;
+				
+				case QA:
+					webEnvironment = properties.getEnvironmentQA();	
+					break;
+					
+				default:
+					System.out.println("Not a valid environment");
+					break;
+			}
+		} else {
+			if(properties.getDefaultEnvironment().equals("QA")){
+				webEnvironment = properties.getEnvironmentQA();
+			}else if(properties.getDefaultEnvironment().equals("PRODUCTION")){
+				webEnvironment = properties.getEnvironmentProduction();
+			} else{
+				webEnvironment = properties.getEnvironmentQA();
+			}
 		}
-		return finder;
+		
+		return webEnvironment;
 	}
 	
 	public String getUrl(){
@@ -60,17 +103,5 @@ public class TestEnvironment {
 	
 	public void setUrl(String urlEnvironment){
 		url = urlEnvironment;
-	}
-	
-	@Before
-	public void setUp() throws Exception {
-		getFinder().getDriver(getBrowser(), getCapabilities());
-		setDriver(getFinder().getWebDriver());
-		setUrl(getFinder().getEnvironment(getEnvironment()));
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-		getFinder().closeBrowser();
 	}
 }

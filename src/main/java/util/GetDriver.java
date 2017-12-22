@@ -7,5 +7,4 @@ public class GetDriver {
 	public static String fireFox(){
 		return System.getProperty("user.dir") + firefoxDriver;
 	}
-	
 }
