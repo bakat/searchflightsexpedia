@@ -10,7 +10,7 @@ Scenario: Search results should list flights available
 	And I select 2 for the number of adults flying
 	When I submit the search
 	Then the search results page should list the available flights
-	And the first flight option should cost "£87.90"
+	And the first flight option should cost "£88.00"
 	And the first flight option should not cost "£0.92"
 	And the panel Airlines included should be  visible
 	And the bottom of the  page should contain the text "© 2017 Expedia, Inc. All rights reserved."

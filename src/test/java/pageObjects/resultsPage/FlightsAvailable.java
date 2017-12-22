@@ -1,5 +1,6 @@
 package pageObjects.resultsPage;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -16,6 +17,7 @@ public class FlightsAvailable implements PageObjectInterface{
 	private WebElement sortBar;
 	@FindBy(how = How.ID, using="flightModuleList")
 	private WebElement flightResultsList;
+	String buttonClassName = "btn-secondary btn-action t-select-btn";
 	
 	private String firstFlightsPrice = null;
 	
@@ -29,9 +31,14 @@ public class FlightsAvailable implements PageObjectInterface{
 	}
 	
 	public String getPriceForFirstFlightOption(){
-		finder.waitForFirstButtonToBeClickable(flightResultsList);
+//		finder.waitForElementsVisible(flightResultsList.findElements(By.className("btn-secondary btn-action t-select-btn")));
+//		finder.waitForElementToBeClickable(flightResultsList.findElements(By.className("btn-secondary btn-action t-select-btn")).iterator().next());
+//		finder.waitForElementPresent(flightResultsList.findElements(By.className("btn-secondary btn-action t-select-btn")).iterator().next());
+		
+		finder.waitForElementWithClassName(flightResultsList, buttonClassName);
+		
 		if(firstFlightsPrice == null){
-			firstFlightsPrice = finder.getPriceForFirstFlightAvailable(flightResultsList);
+			firstFlightsPrice = finder.getPriceForFirstFlightAvailable(flightResultsList, buttonClassName);
 		}
 		return firstFlightsPrice;
 	}

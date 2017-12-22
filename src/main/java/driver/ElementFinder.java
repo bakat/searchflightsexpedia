@@ -27,7 +27,7 @@ import com.google.common.base.Function;
 
 public class ElementFinder {
 	
-	private static final int TIMEOUT = 30000;
+	private static final Long TIMEOUT = 30L;
 	private TestAutomationProperties properties;
 	private WebDriver webDriver;
 	
@@ -164,14 +164,33 @@ public class ElementFinder {
 	   });
 	}
 	
+	public void waitForElementWithClassName(WebElement element, String className){
+		int attempts = 0;
+		while (attempts < 15) {
+			try {
+				attempts++;
+				waitForElementToBeClickable(element.findElements(By.className(className)).iterator().next());
+				if(element.findElements(By.className(className)).iterator().next().isDisplayed()){
+					break;
+				}
+			} catch (Exception e) {
+			}
+		}
+	}
+	
 	public void waitForElementToBeClickable(WebElement element){
-		WebDriverWait wait = new WebDriverWait(webDriver, 30);
+		WebDriverWait wait = new WebDriverWait(webDriver, TIMEOUT);
 		wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 	
 	public void waitForElementPresent(WebElement element) {
 		WebDriverWait wait = new WebDriverWait(webDriver, TIMEOUT);
 		wait.until(ExpectedConditions.visibilityOf(element));
+	}
+	
+	public void waitForElementsVisible(List<WebElement> elements) {
+		WebDriverWait wait = new WebDriverWait(webDriver, TIMEOUT);
+		wait.until(ExpectedConditions.visibilityOfAllElements(elements));
 	}
 	
 	public void waitForTextPresent(final String text){
@@ -304,12 +323,12 @@ public class ElementFinder {
 		searchForElementAndClick(text, elements);
 	}
 	
-	public String getPriceForFirstFlightAvailable(WebElement element){
+	public String getPriceForFirstFlightAvailable(WebElement element, String className){
 		waitForElementPresent(element);
 		List<WebElement> liElements = element.findElements(By.tagName("li"));
 		
 		for (WebElement webElement : liElements) {
-			waitForElementPresent(webElement);
+			waitForElementWithClassName(webElement, className);
 			List<WebElement> priceColumn = webElement.findElements(By.className("price-column"));
 			for (WebElement price : priceColumn) {
 				if(hasAttribute(price, "data-test-price-per-traveler")){
@@ -356,8 +375,4 @@ public class ElementFinder {
 		return result;
 	}
 
-	public void waitForFirstButtonToBeClickable(WebElement flightResultsList) {
-		List<WebElement> buttons = flightResultsList.findElements(By.tagName("button"));
-		waitForElementToBeClickable(buttons.iterator().next());
-	}
 }
