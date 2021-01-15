@@ -1,4 +1,4 @@
-# GLOBOFORCE - Technical assessment
+# Expedia search flight
 
 Author: Bernardo Vieira Carneiro
 
